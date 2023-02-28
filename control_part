@@ -1,0 +1,82 @@
+clear all; clc;
+
+% initial condition
+robot_1 = [1, 1, 1, 2, 60, 2];
+dot_vf = 0;
+dot_lambda = 0;
+goal = [10, 10];
+dt = 0.1;
+
+store = [robot_1];
+
+kp = 0.5;
+kd = 001;
+
+% go to the goal
+for i = 1: 1: 11000
+    last_state = robot_1;
+    last_goal = goal;
+    robot_1 = state_space_form(robot_1, dot_vf, dot_lambda);
+    store = [store; robot_1];
+    [e_lambda, e_p] = error_renew(goal, robot_1);
+    a = pd_controller(kp, kd, last_state(1), robot_1(1), last_goal(1), goal(1), dt, e_p);
+    v_lambda = pd_controller(kp, kd, last_state(5), robot_1(5), last_goal(2), goal(2), dt, e_lambda);
+    [dot_vf, dot_lambda] = renew_part(a, v_lambda, dot_vf, dot_lambda);
+
+    % vis
+    plot(goal(1), goal(2), 'o')
+    hold on
+    plot(robot_1(1), robot_1(2), 'o')
+    hold off
+    axis([0, 15, 0, 15])
+    drawnow
+
+    goal(1) = goal(1) - 0.02;
+    
+
+end
+
+function [e_lambda, e_p] = error_renew(goal, state)
+    
+    e_p = abs(goal(1) - state(1)) - 1.5;
+    e_lambda = atan2((goal(2) - state(2)), (goal(1) - state(1)))*180 / pi - state(5);
+
+end
+
+function [out] = pd_controller(kp, kd, last_state, now_state, last_goal, now_goal, dt, e_state)
+    d_state = now_state - last_state;
+    d_goal = now_goal - last_goal;
+    out = kp * e_state + kd * (d_goal/dt - d_state/dt);
+end
+
+function new_state = state_space_form(state, dot_vf, dot_lambda)
+
+    T = 0.01;
+    u = [dot_vf , dot_lambda];
+    x1_dot = state(3);
+    x2_dot = state(4);
+    x3_dot = u(1) * cosd(state(5));
+    x4_dot = u(1) * sind(state(5));
+    x5_dot = u(2);
+    x6_dot = u(1);
+    
+    x_dot = [x1_dot, x2_dot, x3_dot, x4_dot, x5_dot, x6_dot];
+    new_state = state + x_dot * T;
+    new_state(6) = max(0, new_state(6));
+    new_state(6) = min(5, new_state(6));
+    new_state(3) = new_state(6) * cosd(new_state(5));
+    new_state(4) = new_state(6) * sind(new_state(5));
+    
+end
+
+function [new_a, new_lambda] = renew_part(a, v_lambda, last_a, last_v_lambda)
+    new_a = last_a + a;
+    new_a = min(2, new_a);
+    new_a = max(-5, new_a);
+    new_lambda = last_v_lambda + v_lambda;
+end
+
+
+
+
+    
