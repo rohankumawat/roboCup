@@ -2,7 +2,7 @@
 This is a matlab roboCup programe. Download the zip and run the main.m function and run the Vizpart.m to see how the game run.  
 The following figure is the example of our game.  
 
-[![Video](https://github.com/rohankumawat/roboCup/blob/main/football_game.mp4)
+[![Figure](https://github.com/rohankumawat/roboCup/blob/main/court.png)
 
 
 # Code
