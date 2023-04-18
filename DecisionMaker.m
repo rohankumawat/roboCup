@@ -25,7 +25,7 @@ classdef DecisionMaker <handle
 
     end     
     methods
-        %state: 1.pass  2.shoot 3.carry  4.around  5.defend
+        %state: 1.pass  2.shoot 3.red carry  4.around  5.defend 6.back 7.blue carry
         function fg = distance(obj)  %distance between each player and ball
                 obj.dAs = sqrt((obj.positionBall(1)-obj.positionAs(1))^2+(obj.positionBall(2)-obj.positionAs(2))^2);
                 obj.dAd1 = sqrt((obj.positionBall(1)-obj.positionAd1(1))^2+(obj.positionBall(2)-obj.positionAd1(2))^2);
@@ -87,77 +87,65 @@ classdef DecisionMaker <handle
 
             elseif(role<=4 && flag<=4 && flag>=1) || (role>4 && flag >4)    %control ball ourselves   1goalkeeper，2、3defender，4striker
                 if role==4 || role==8  %current role is striker
-                    if role==4 && flag==4  %red striker control ball
+                    if role==4 && flag==4  %red striker holds ball
                         if (obj.dBd1 <=40 && obj.positionBd1(1)>obj.positionAs(1)) || (obj.dBd2<=40 && obj.positionBd2(1)>obj.positionAs(1))
-                            state  = 1;%敌方后卫在我方带球前锋前方并相距小于40，传球
-%                         elseif (obj.dBd1 <=80 && obj.positionBd1(1)>obj.positionAs(1)) || (obj.dBd2<=80 && obj.positionBd2(1)>obj.positionAs(1))
-%                             state  = 'dribble';%敌方后卫在我方带球前锋前方并相距小于80，带球过人
+                            state  = 1;%Enemy's defenders are ahead and the distance less than 40, pass
                         elseif obj.dBg <= 320
-                            state = 2;%ball与blue守门员距离小于220，red前锋射门
+                            state = 2;%The distance between ball and blue goalkeeper less than 220, shoot
                         else
-                            state = 3;%带球前进
+                            state = 3;%Red Carry ball
                         end
-                    elseif role==8 && flag==8 %blue前锋拿球
+                    elseif role==8 && flag==8 %Blue striker holds ball
                         if (obj.dAd1 <=40 && obj.positionBs(1)>obj.positionAd1(1)) || (obj.dAd2<=40 && obj.positionBs(1)>obj.positionAd2(1))
-                            state  = 1;%敌方后卫在我方带球前锋前方并相距小于40，传球
-%                         elseif (obj.dAd1 <=80 && obj.positionBs(1)>obj.positionAd1(1)) || (obj.dAd2<=80 && obj.positionBs(1)>obj.positionAd2(1))
-%                             state  = 'dribble';%敌方后卫在我方带球前锋前方并相距小于80，带球过人
+                            state  = 1;%Enemy's defenders are ahead and the distance less than 40, pass
                         elseif obj.dAg <= 320
-                            state = 2;%ball与blue守门员距离小于220，前锋射门
+                            state = 2;%The distance between ball and red goalkeeper less than 220, shoot
                         else 
-                            state = 7;%带球前进
+                            state = 7;%Blue Carry ball
                         end
                     else
-                        state = 4;%前锋没有拿球，准备接球
+                        state = 4;%Striker doesn't hold ball and runs around
                     end
 
-                elseif role==2 || role==3 || role==6 || role ==7 %当前球员是后卫
-                    if role==2 && flag==2  %red后卫1拿球，当前球员是red后卫2
+                elseif role==2 || role==3 || role==6 || role ==7 %Current player is defender
+                    if role==2 && flag==2  %Red defender 2 holds ball, and current player is 2
                         if ((obj.positionBs(1) > obj.positionAd1(1)) && (obj.dBs <= 40)) || ((obj.positionBd1(1) > obj.positionAd1(1)) && (obj.dBd1<=40)) || ((obj.positionBd2(1) > obj.positionAd1(1)) && (obj.dBd2<=40))
-                            state = 1;%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于40，传球
-%                         elseif ((obj.positionBs(1) > obj.positionAd1(1)) && (obj.dBs <= 80)) ||((obj.positionBd1(1) > obj.positionAd1(1)) && (obj.dBd1<=80)) || ((obj.positionBd2(1) > obj.positionAd1(1)) && (obj.dBd2<=40))
-%                             state  = 'dribble';%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于80，带球过人
+                            state = 1;%Enemy's striker and defenders are ahead and the distance less than 40, pass
                         else
-                            state = 3;%带球前进
+                            state = 3;%Carry ball
                         end
-                    elseif role==3 && flag==3   %red后卫2拿球，当前球员是red后卫2
+                    elseif role==3 && flag==3   %Red defender 3 holds ball, and current player is 3
                         if ((obj.positionBs(1) > obj.positionAd2(1)) && (obj.dBs <= 40)) || ((obj.positionBd1(1) > obj.positionAd2(1)) && (obj.dBd1<=40)) || ((obj.positionBd2(1) > obj.positionAd2(1)) && (obj.dBd2<=40))
-                            state = 1;%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于40，传球
-%                         elseif ((obj.positionBs(1) > obj.positionAd2(1)) && (obj.dBs <= 80)) || ((obj.positionBd1(1) > obj.positionAd2(1)) && (obj.dBd1<=80)) || ((obj.positionBd2(1) > obj.positionAd2(1)) && (obj.dBd2<=80))
-%                             state  = 'dribble';%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于80，带球过人
+                            state = 1;%Enemy's striker and defenders are ahead and the distance less than 40, pass
                         else
-                            state = 3;%带球前进
+                            state = 3;%Carry ball
                         end
-                    elseif role==6 && flag==6   %blue后卫6拿球，当前球员是blue后卫6
+                    elseif role==6 && flag==6   %Blue defender 6 holds ball, and current role is 6
                         if ((obj.positionAs(1) < obj.positionBd1(1)) && (obj.dAs <= 40)) || ((obj.positionAd1(1) > obj.positionBd1(1)) && (obj.dAd1<=40)) || ((obj.positionAd2(1) > obj.positionBd1(1)) && (obj.dAd2<=40))
-                            state = 1;%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于40，传球
-%                         elseif ((obj.positionAs(1) < obj.positionBd1(1)) && (obj.dAs <= 80)) || ((obj.positionAd1(1) > obj.positionBd1(1)) && (obj.dAd1<=80)) || ((obj.positionAd2(1) > obj.positionBd1(1)) && (obj.dAd2<=80))
-%                             state  = 'dribble';%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于80，带球过人
+                            state = 1;%Enemy's striker and defenders are ahead and the distance less than 40, pass
                         else
-                            state = 7;%带球前进
+                            state = 7;%Carry ball
                         end
-                    elseif role==7 && flag==7
+                    elseif role==7 && flag==7 %Blue defender 7 holds ball, and current role is 7
                         if ((obj.positionAs(1) < obj.positionBd2(1)) && (obj.dAs <= 40)) || ((obj.positionAd1(1) > obj.positionBd1(1)) && (obj.dAd1<=40)) || ((obj.positionAd2(1) > obj.positionBd1(1)) && (obj.dAd2<=40))
-                            state = 1;%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于40，传球
-%                         elseif ((obj.positionAs(1) < obj.positionBd2(1)) && (obj.dAs <= 80)) || ((obj.positionAd1(1) > obj.positionBd2(1)) && (obj.dAd1<=80)) || ((obj.positionAd2(1) > obj.positionBd2(1)) && (obj.dAd2<=80))
-%                             state  = 'dribble';%敌方前锋、后卫1、后卫2在我方带球后卫前方并相距小于80，带球过人
+                            state = 1;%Enemy's striker and defenders are ahead and the distance less than 40, pass
                         else
-                            state = 7;%带球前进
+                            state = 7;%Carry ball
                         end
                     else
-                        state = 4;%后卫没有拿球，原地转
+                        state = 4;%Defender doesn't hold ball, around
                     end
-                else %当前角色是Goalkeeper
-                    if role==1 && flag==1   %当前角色是red守门员并且拿球
+                else %Current role isGoalkeeper
+                    if role==1 && flag==1   %Current role is red goalkeeper and holds ball
                         state = 1;
-                    elseif role==5 && flag==5   %当前角色是blue守门员并且拿球
+                    elseif role==5 && flag==5   %Current role is blue goalkeeper and hold ball
                         state = 1;
                     else
                         state =4;
                     end
                 end
 
-            else %球处于无控制状态
+            else %Ball is out of control for all players
                 if r < 300
                     state = 5;
                 else
