@@ -2,7 +2,8 @@
 This is a matlab roboCup programe. Download the zip and run the main.m function and run the Vizpart.m to see how the game run.  
 The following figure is the example of our game.  
 
-![image](https://user-images.githubusercontent.com/68543461/232842883-af90ce5d-66df-453c-889d-576043356d54.png) 
+[![Video](https://img.youtube.com/vi/VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID_HERE)
+
 
 # Code
 Please find code here: https://github.com/rohankumawat/roboCup
